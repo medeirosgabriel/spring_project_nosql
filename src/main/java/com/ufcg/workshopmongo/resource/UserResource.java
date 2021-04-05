@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.ufcg.workshopmongo.domain.Post;
 import com.ufcg.workshopmongo.domain.User;
 import com.ufcg.workshopmongo.dto.UserDTO;
 import com.ufcg.workshopmongo.service.UserService;
@@ -28,13 +29,13 @@ public class UserResource {
 	public ResponseEntity<List<UserDTO>> findAll() {
 		List<UserDTO> list = new LinkedList<>();
 		userService.findAll().stream().forEach((a) -> list.add(new UserDTO(a)));;
-		return ResponseEntity.ok(list);
+		return ResponseEntity.ok().body(list);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<UserDTO> findById(@PathVariable String id) {
 		User user = userService.findById(id);
-		return ResponseEntity.ok(new UserDTO(user));
+		return ResponseEntity.ok().body(new UserDTO(user));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -57,5 +58,11 @@ public class UserResource {
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		this.userService.deleteUser(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(value = "/{id}/posts", method = RequestMethod.GET)
+	public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
+		User user = userService.findById(id);
+		return ResponseEntity.ok().body(user.getPosts());
 	}
 }
